@@ -1,19 +1,29 @@
-import React from "react"
-import { Container, Alert } from "react-bootstrap"
+import React, { useEffect, useState, useContext } from "react"
+import { Container } from "react-bootstrap"
+import Message from "components/Message"
+import Inputform from "components/Inputform"
+import List from "components/List"
+import TasksContext from "../withSocket"
 
-import Spinner from "components/Spinner"
+const Root = (props) => {
+  const [tasks, setTasks] = useState([])
+  const [message, setMessage] = useState("")
 
-const Root = props => {
+  const taskState = useContext(TasksContext)
+
+  useEffect(() => {
+    taskState.allTasks((allTasks) => setTasks(allTasks))
+    taskState.message((message) => setMessage(message))
+  }, [])
+
   return (
-    <Container>
-      <Alert variant="info" className="mt-5">
-        <code>containers/Root</code>
-      </Alert>
-      <div className="text-center">
-        <h5>Spinner component:</h5>
-        <Spinner size={42} />
-      </div>
-    </Container>
+    <TasksContext.Provider>
+      <Container>
+        <Message message={message} />
+        <Inputform taskState={taskState} />
+        <List tasks={tasks} />
+      </Container>
+    </TasksContext.Provider>
   )
 }
 
